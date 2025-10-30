@@ -129,11 +129,11 @@ HSV ColorModel::rgbToHsv(const RGB& rgb) const
         hsv.s = (delta / max) * 100.0;
     }
 
-    if (delta < 0.0001) {
+    if (delta == 0) {
         hsv.h = 0;
-    } else if (red >= max) {
+    } else if (red == max) {
         hsv.h = 60.0 * fmod(((green - blue) / delta), 6.0);
-    } else if (green >= max) {
+    } else if (green == max) {
         hsv.h = 60.0 * (((blue - red) / delta) + 2.0);
     } else {
         hsv.h = 60.0 * (((red - green) / delta) + 4.0);
