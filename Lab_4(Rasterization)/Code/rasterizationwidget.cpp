@@ -581,7 +581,7 @@ void RasterizationWidget::drawStepByStepLine(const QPoint& start, const QPoint& 
             int endY = std::max(y1, y2);
 
             for (int y = startY; y <= endY; y++) {
-                int x = static_cast<int>((y - b)/m);
+                int x =qRound((y - b)/m);
                 drawGridCell(x, y, QColor(0, 100, 200)); // Синий цвет
             }
         } else{
@@ -591,7 +591,7 @@ void RasterizationWidget::drawStepByStepLine(const QPoint& start, const QPoint& 
             int endX = std::max(x1, x2);
 
             for (int x = startX; x <= endX; x++) {
-                int y = static_cast<int>(m * x + b);
+                int y = qRound(m * x + b);
                 drawGridCell(x, y, QColor(0, 100, 200)); // Синий цвет
             }
         }
@@ -643,24 +643,51 @@ void RasterizationWidget::drawBresenhamLine(const QPoint& start, const QPoint& e
     int dy = abs(y2 - y1);
     int sx = (x1 < x2) ? 1 : -1;
     int sy = (y1 < y2) ? 1 : -1;
-    int err = dx - dy;
 
-    int x = x1;
-    int y = y1;
+    if (dx > dy){
+        int err = 2* dy - dx;
 
-    while (true) {
+        int x = x1;
+        int y = y1;
+
         drawGridCell(x, y, QColor(0, 150, 0)); // Зеленый цвет
-
-        if (x == x2 && y == y2) break;
-
-        int e2 = 2 * err;
-        if (e2 > -dy) {
-            err -= dy;
-            x += sx;
+        while (x != x2) {
+            if (err >= 0) {
+                err += 2*(dy-dx);
+                x += sx;
+                y += sy;
+            }
+           else {
+                err += 2 * dy;
+                x += sx;
+            }
+            drawGridCell(x, y, QColor(0, 150, 0)); // Зеленый цвет
         }
-        if (e2 < dx) {
-            err += dx;
-            y += sy;
+    }
+    else if (dx < dy){
+        int err = 2* dx - dy;
+
+        int x = x1;
+        int y = y1;
+
+        drawGridCell(x, y, QColor(0, 150, 0)); // Зеленый цвет
+        while (y != y2) {
+            if (err >= 0) {
+                err += 2*(dx-dy);
+                x += sx;
+                y += sy;
+            }
+            else {
+                err += 2 * dx;
+                y += sy;
+            }
+            drawGridCell(x, y, QColor(0, 150, 0)); // Зеленый цвет
+        }
+    }
+    else{
+        for(int i = 0; i <= dx; ++i){
+
+            drawGridCell(x1+i*sx, y1 +i*sy , QColor(0, 150, 0)); // Зеленый цвет
         }
     }
 
